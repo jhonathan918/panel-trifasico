@@ -1,25 +1,25 @@
 #include <iostream>
 #include <cstring>
 
-struct Modulo {
+struct ModuloSistema {
     int id;
-    char nombre[40];
+    char nombre[50];
     bool activo;
-    float carga;
+    float valor;
 };
 
 extern "C" {
-    void InicializarModulo(Modulo* mod, int id, const char* nom, float carga) {
+    void InicializarEntorno(ModuloSistema* mod, int id, const char* nom, float valor) {
         if (mod != nullptr) {
             mod->id = id;
             std::strncpy(mod->nombre, nom, sizeof(mod->nombre) - 1);
             mod->nombre[sizeof(mod->nombre) - 1] = '\0';
             mod->activo = false;
-            mod->carga = carga;
+            mod->valor = valor;
         }
     }
 
-    void AlternarEstado(Modulo* mod) {
+    void AlternarEstado(ModuloSistema* mod) {
         if (mod != nullptr) {
             mod->activo = !mod->activo;
         }

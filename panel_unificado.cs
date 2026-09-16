@@ -1,68 +1,95 @@
 using System;
+using System.IO;
+using System.Threading;
 using System.Runtime.InteropServices;
 
-class Program {
+class Programa
+{
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct Modulo {
+    public struct ModuloSistema
+    {
         public int id;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 40)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 50)]
         public string nombre;
         [MarshalAs(UnmanagedType.I1)]
         public bool activo;
-        public float carga;
+        public float valor;
     }
 
-    [DllImport("./libnativa.so", EntryPoint = "InicializarModulo")]
-    public static extern void InicializarModulo(ref Modulo mod, int id, string nom, float carga);
+    [DllImport("./libnativa.so", EntryPoint = "InicializarEntorno")]
+    public static extern void InicializarEntorno(ref ModuloSistema mod, int id, string nom, float valor);
 
     [DllImport("./libnativa.so", EntryPoint = "AlternarEstado")]
-    public static extern void AlternarEstado(ref Modulo mod);
+    public static extern void AlternarEstado(ref ModuloSistema mod);
 
-    static void Main() {
-        Console.Clear();
-        
-        Modulo[] lista = new Modulo[3];
-        
-        InicializarModulo(ref lista[0], 1, "Compilador GCC Clang (C)", 12.5f);
-        InicializarModulo(ref lista[1], 2, "Entorno Mono (C#)", 45.2f);
-        InicializarModulo(ref lista[2], 3, "Linter Ruff (C++)", 5.0f);
-
-        Console.WriteLine("=======================================================");
-        Console.WriteLine("  SISTEMA TRIFÁSICO UNIFICADO: C + C++ + C# ");
-        Console.WriteLine("=======================================================");
-
-        for (int i = 0; i < lista.Length; i++) {
-            string estado = lista[i].activo ? "✅ ACTIVO " : "⏸️ INACTIVO";
-            Console.WriteLine($"  [{lista[i].id}] {lista[i].nombre,-30} {estado} ({lista[i].carga}%)");
+    static void EjecutarAnimacionCarga(string proceso, int milisegundos)
+    {
+        Console.Write($"\n [>] {proceso}: [");
+        for (int i = 0; i <= 20; i++)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("█");
+            Thread.Sleep(milisegundos / 20);
         }
-        Console.WriteLine("  [4] ACTIVAR LOS 3 AL MISMO TIEMPO");
-        Console.WriteLine("=======================================================");
+        Console.ResetColor();
+        Console.WriteLine("] 100% [COMPLETO]");
+    }
 
-        Console.Write("\nSelecciona una opcion (0=Salir): ");
-        if (int.TryParse(Console.ReadLine(), out int op)) {
-            if (op >= 1 && op <= lista.Length) {
-                // Alternar solo el elegido
-                AlternarEstado(ref lista[op - 1]);
-                string nuevoEstado = lista[op - 1].activo ? "ACTIVADO" : "DESACTIVADO";
-                Console.WriteLine($"\n El modulo '{lista[op - 1].nombre}' fue {nuevoEstado} por C++.");
+    static void Main()
+    {
+        Console.Clear();
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("=======================================================");
+        Console.WriteLine("        INICIANDO PROTOCOLO DE CONEXIÓN LOCAL          ");
+        Console.WriteLine("=======================================================");
+        Console.ResetColor();
+        Thread.Sleep(300);
+
+        EjecutarAnimacionCarga("Mapeando direcciones de memoria RAM", 400);
+        EjecutarAnimacionCarga("Estabilizando hilos en procesador CPU", 400);
+        
+        ModuloSistema[] lista = new ModuloSistema[5];
+        InicializarEntorno(ref lista[0], 1, "COMPILADOR CLANG NATIVO",         85.5f);
+        InicializarEntorno(ref lista[1], 2, "OPTIMIZADOR DE HILOS CPU",       92.0f);
+        InicializarEntorno(ref lista[2], 3, "GESTION DE ARCHIVOS BINARIOS",   78.3f);
+        InicializarEntorno(ref lista[3], 4, "SISTEMA DE LOGS Y REPORTES",     65.0f);
+        InicializarEntorno(ref lista[4], 5, "VERIFICACION DE DOCUMENTOS",     88.7f);
+
+        bool ejecutando = true;
+        while (ejecutando)
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(@"    ____  ___    _   __________     ___________ ");
+            Console.WriteLine(@"   / __ \/   |  / | / / ____/ /    / ____/ ____| ");
+            Console.WriteLine(@"  / /_/ / /| | /  |/ / __/ / /    / /_  / /_     ");
+            Console.WriteLine(@" / ____/ ___ |/ /|  / /___/ /____/ __/ / __/     ");
+            Console.WriteLine(@"/_/   /_/  |_/_/ |_/_____/_____/_/   /_/         ");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(@"             _______          ______             ");
+            Console.WriteLine(@"            /  ____ \        / ____  \           ");
+            Console.WriteLine(@"           /  /    \ \      / /    \  \          ");
+            Console.WriteLine(@"          |  |  O   | |    | |   O  |  |         ");
+            Console.WriteLine(@"           \  \____/ /      \ \____/  /          ");
+            Console.WriteLine(@"            \_______/        \_______/           ");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine(@"  --- CONTROLADOR EN MEMORIA RAM · ENTORNO TERMUX ---");
+            Console.ResetColor();
+            Console.WriteLine("=======================================================");
+
+            for (int i = 0; i < lista.Length; i++) {
+                string estado = lista[i].activo ? "✅ ACTIVO " : "⏸️ INACTIVO";
+                Console.WriteLine($"  [{lista[i].id}] {lista[i].nombre,-30} {estado} ({lista[i].valor}%)");
             }
-            else if (op == 4) {
-                // Bucle optimizado para activar los 3 en fila pasando el control a C/C++
-                Console.Clear();
-                Console.WriteLine(">>> Procesando activacion masiva en memoria...");
-                for (int i = 0; i < lista.Length; i++) {
-                    if (!lista[i].activo) {
-                        AlternarEstado(ref lista[i]);
-                    }
+            Console.WriteLine("=======================================================");
+            Console.Write("Escribe N° de opción (0=Salir): ");
+            
+            string entrada = Console.ReadLine();
+            if (int.TryParse(entrada, out int op)) {
+                if (op == 0) ejecutando = false;
+                else if (op >= 1 && op <= lista.Length) {
+                    AlternarEstado(ref lista[op - 1]);
                 }
-                
-                Console.WriteLine("\n=======================================================");
-                for (int i = 0; i < lista.Length; i++) {
-                    string estado = lista[i].activo ? "✅ ACTIVO " : "⏸️ INACTIVO";
-                    Console.WriteLine($"  [{lista[i].id}] {lista[i].nombre,-30} {estado}");
-                }
-                Console.WriteLine("=======================================================");
-                Console.WriteLine("\n✅ Los 3 entornos se han encendido correctamente en simultaneo.");
             }
         }
     }
