@@ -31,7 +31,7 @@ class Programa
         mod.valor = valor;
     }
 
-    // ANIMACIÓN ULTRA-REALISTA DE CARGA (BARRA TEXTUAL)
+    // ANIMACIÓN DE CARGA (BARRA TEXTUAL)
     static void EjecutarAnimacionCarga(string proceso, int milisegundos)
     {
         Console.Write($"\n [>] {proceso}: [");
@@ -109,7 +109,7 @@ class Programa
         string archivoConfig = "config_sistema.txt";
         ModuloSistema[] lista = new ModuloSistema[5];
         
-        // Inicialización de funciones del sistema de desarrollo local
+        // Inicialización de funciones con la sintaxis corregida al 100%
         InicializarEntorno(ref lista[0], 1, "COMPILADOR CLANG NATIVO",         85.5f);
         InicializarEntorno(ref lista[1], 2, "OPTIMIZADOR DE HILOS CPU",       92.0f);
         InicializarEntorno(ref lista[2], 3, "GESTION DE ARCHIVOS BINARIOS",   78.3f);
