@@ -1,116 +1,204 @@
 using System;
+using System.IO;
+using System.Threading;
 using System.Runtime.InteropServices;
 
-// Estructura de datos optimizada con alineación de memoria fija (Estilo C)
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-struct ModuloSistema {
+struct ModuloSistema
+{
     public int id;
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 50)]
     public string nombre;
     public bool activo;
-    public float cargaCPU;
+    public float valor;
 }
 
-class Program {
-    // 1. LÓGICA ESTILO LENGUAJE C: Manipulación directa de memoria por punteros
-    // Requiere activar el modo 'unsafe' en el compilador
-    static unsafe void AlternarEstadoPuntero(ModuloSistema* mod) {
-        if (mod != null) {
+class Programa
+{
+    static unsafe void AlternarEstado(ModuloSistema* mod)
+    {
+        if (mod != null)
+        {
             mod->activo = !mod->activo;
         }
     }
 
-    // 2. LÓGICA ESTILO C++: Estructuración modular orientada a objetos nativa
-    static void InicializarEntorno(ref ModuloSistema mod, int id, string nombre, float carga) {
+    static void InicializarEntorno(ref ModuloSistema mod, int id, string nombre, float valor)
+    {
         mod.id = id;
         mod.nombre = nombre;
         mod.activo = false;
-        mod.cargaCPU = carga;
+        mod.valor = valor;
     }
 
-    // 3. LÓGICA DE CONTROL EN C#: Gestión de arreglos y flujo de consola principal
-    static void Main() {
-        Console.Clear();
-
-        // Crear el arreglo de estructuras en memoria
-        ModuloSistema[] lista = new ModuloSistema[3];
-        
-        // Inicialización de los tres sub-entornos de desarrollo
-        InicializarEntorno(ref lista[0], 1, "Nucleo de Rendimiento en C", 14.2f);
-        InicializarEntorno(ref lista[1], 2, "Procesamiento de Graficos (C++)", 38.5f);
-        InicializarEntorno(ref lista[2], 3, "Controlador de Interfaz (C#)", 8.0f);
-
-        // =========================================================================
-        //  TITULO Y DIBUJO EN ARTE ASCII (ESTILO ITACHI SHARINGAN)
-        // =========================================================================
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine(@"    ____  ___    _   __________     ___________ ");
-        Console.WriteLine(@"   / __ \/   |  / | / / ____/ /    / ____/ ____| ");
-        Console.WriteLine(@"  / /_/ / /| | /  |/ / __/ / /    / /_  / /_     ");
-        Console.WriteLine(@" / ____/ ___ |/ /|  / /___/ /____/ __/ / __/     ");
-        Console.WriteLine(@"/_/   /_/  |_/_/ |_/_____/_____/_/   /_/         ");
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine(@"             _______          ______             ");
-        Console.WriteLine(@"            /  ____ \        / ____  \           ");
-        Console.WriteLine(@"           /  /    \ \      / /    \  \          ");
-        Console.WriteLine(@"          |  |  O   | |    | |   O  |  |         ");
-        Console.WriteLine(@"           \  \____/ /      \ \____/  /          ");
-        Console.WriteLine(@"            \_______/        \_______/           ");
-        Console.ForegroundColor = ConsoleColor.DarkRed;
-        Console.WriteLine(@"     --- SHARINGAN UNIFICADO CON CONSOLE-RAM ---");
-        Console.ResetColor();
-        Console.WriteLine("=======================================================");
-
-        // Bucle de renderizado de la interfaz gráfica textual
-        for (int i = 0; i < lista.Length; i++) {
-            string estado = lista[i].activo ? "✅ ACTIVO " : "⏸️ INACTIVO";
-            Console.WriteLine($"  [{lista[i].id}] {lista[i].nombre,-35} {estado} ({lista[i].cargaCPU}%)");
+    // ANIMACIÓN ULTRA-REALISTA DE CARGA (BARRA TEXTUAL)
+    static void EjecutarAnimacionCarga(string proceso, int milisegundos)
+    {
+        Console.Write($"\n [>] {proceso}: [");
+        for (int i = 0; i <= 20; i++)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("█");
+            Thread.Sleep(milisegundos / 20);
         }
-        Console.WriteLine("  [4] ACTIVAR LOS 3 ENTORNOS EN SIMULTANEO");
-        Console.WriteLine("=======================================================");
+        Console.ResetColor();
+        Console.WriteLine("] 100% [COMPLETO]");
+    }
 
-        Console.Write("\nEscribe el N° de opcion (0=Salir): ");
-        if (int.TryParse(Console.ReadLine(), out int op)) {
-            // Modificación individual usando punteros directos (Lógica C)
-            if (op >= 1 && op <= lista.Length) {
-                unsafe {
-                    fixed (ModuloSistema* ptr = &lista[op - 1]) {
-                        AlternarEstadoPuntero(ptr);
-                    }
+    // PANTALLA DE INICIO: Interfaz de Consola de Seguridad
+    static void MostrarPantallaCargaCibernetica()
+    {
+        Console.Clear();
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("=======================================================");
+        Console.WriteLine("        INICIANDO PROTOCOLO DE CONEXIÓN LOCAL          ");
+        Console.WriteLine("=======================================================");
+        Console.ResetColor();
+        Thread.Sleep(400);
+
+        Console.WriteLine($" [*] Terminal ID   : TERMUX-AArch64-NODE-{(new Random()).Next(1000, 9999)}");
+        Console.WriteLine($" [*] Nucleo Kernel : LINUX-ANDROID-CORE");
+        Console.WriteLine($" [*] Fecha y Hora  : {DateTime.Now}");
+        Thread.Sleep(300);
+
+        // Secuencia de cargas estéticas consecutivas
+        EjecutarAnimacionCarga("Mapeando direcciones de memoria RAM", 600);
+        EjecutarAnimacionCarga("Estabilizando hilos en procesador CPU", 800);
+        EjecutarAnimacionCarga("Verificando integridad de ficheros binarios", 500);
+
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine("\n [STATUS] Entorno local verificado y listo.");
+        Console.ResetColor();
+        Console.Write(" Presiona ENTER para desplegar el panel visual...");
+        Console.ReadLine();
+    }
+
+    // FUNCIÓN DE ARCHIVOS: Guarda el estado actual en la memoria del dispositivo
+    static void GuardarDocumentoConfig(ModuloSistema[] lista, string ruta)
+    {
+        try
+        {
+            using (StreamWriter escritor = new StreamWriter(ruta))
+            {
+                escritor.WriteLine("=== REPORTE DE CONFIGURACION LOCAL ===");
+                escritor.WriteLine($"Fecha de guardado: {DateTime.Now}");
+                escritor.WriteLine("--------------------------------------");
+                foreach (var mod in lista)
+                {
+                    string estadoText = mod.activo ? "VERIFICADO/ACTIVO" : "INACTIVO";
+                    escritor.WriteLine($"ID: {mod.id} | Componente: {mod.nombre,-30} | Estado: {estadoText} | Eficiencia: {mod.valor}%");
                 }
-                Console.Clear();
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"\n[OK] Estado del entorno {op} modificado directamente en la RAM.");
-                Console.ResetColor();
             }
-            // Activación masiva trifásica en un solo ciclo
-            else if (op == 4) {
-                Console.Clear();
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine(">>> Ejecutando conmutacion masiva por mapeo de memoria...\n");
-                
-                unsafe {
-                    for (int i = 0; i < lista.Length; i++) {
-                        if (!lista[i].activo) {
-                            fixed (ModuloSistema* ptr = &lista[i]) {
-                                AlternarEstadoPuntero(ptr);
-                            }
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"\n[SISTEMA] Documento guardado con éxito en: {Path.GetFullPath(ruta)}");
+            Console.ResetColor();
+        }
+        catch (Exception ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"\n[ERROR] No se pudo escribir el archivo: {ex.Message}");
+            Console.ResetColor();
+        }
+    }
+
+    static void Main()
+    {
+        // Lanzar la secuencia animada de inicio antes de abrir el menú principal
+        MostrarPantallaCargaCibernetica();
+
+        string archivoConfig = "config_sistema.txt";
+        ModuloSistema[] lista = new ModuloSistema[5];
+        
+        // Inicialización de funciones del sistema de desarrollo local
+        InicializarEntorno(ref lista[0], 1, "COMPILADOR CLANG NATIVO",         85.5f);
+        InicializarEntorno(ref lista[1], 2, "OPTIMIZADOR DE HILOS CPU",       92.0f);
+        InicializarEntorno(ref lista[2], 3, "GESTION DE ARCHIVOS BINARIOS",   78.3f);
+        InicializarEntorno(ref lista[3], 4, "SISTEMA DE LOGS Y REPORTES",     65.0f);
+        InicializarEntorno(ref lista[4], 5, "VERIFICACION DE DOCUMENTOS",     88.7f);
+
+        bool ejecutando = true;
+
+        while (ejecutando)
+        {
+            Console.Clear();
+
+            // TITULO Y DIBUJO IMPONENTE DE ITACHI (ARTE ASCII)
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(@"    ____  ___    _   __________     ___________ ");
+            Console.WriteLine(@"   / __ \/   |  / | / / ____/ /    / ____/ ____| ");
+            Console.WriteLine(@"  / /_/ / /| | /  |/ / __/ / /    / /_  / /_     ");
+            Console.WriteLine(@" / ____/ ___ |/ /|  / /___/ /____/ __/ / __/     ");
+            Console.WriteLine(@"/_/   /_/  |_/_/ |_/_____/_____/_/   /_/         ");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(@"             _______          ______             ");
+            Console.WriteLine(@"            /  ____ \        / ____  \           ");
+            Console.WriteLine(@"           /  /    \ \      / /    \  \          ");
+            Console.WriteLine(@"          |  |  O   | |    | |   O  |  |         ");
+            Console.WriteLine(@"           \  \____/ /      \ \____/  /          ");
+            Console.WriteLine(@"            \_______/        \_______/           ");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine(@"  --- CONTROLADOR DE ARCHIVOS NATIVOS · ENTORNO TERMUX ---");
+            Console.ResetColor();
+            Console.WriteLine("=======================================================");
+
+            // TABLA DE COMPONENTES INTERACTIVOS
+            for (int i = 0; i < lista.Length; i++)
+            {
+                string estado = lista[i].activo ? "✅ ACTIVO" : "⏸️ INACTIVO";
+                Console.WriteLine($"  [{lista[i].id}] {lista[i].nombre,-30} {estado}  {lista[i].valor:F1}%");
+            }
+            Console.WriteLine("  [6] Guardar Configuración en Documento");
+            Console.WriteLine("  [0] Salir");
+            Console.WriteLine("=======================================================");
+            Console.Write("Escribe N° de opción: ");
+            
+            string entrada = Console.ReadLine();
+
+            if (int.TryParse(entrada, out int op))
+            {
+                if (op == 0)
+                {
+                    ejecutando = false;
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("\n[+] Cerrando el entorno de forma segura...");
+                    Console.ResetColor();
+                }
+                else if (op >= 1 && op <= lista.Length)
+                {
+                    unsafe
+                    {
+                        fixed (ModuloSistema* ptr = &lista[op - 1])
+                        {
+                            AlternarEstado(ptr);
                         }
                     }
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"\n[MODIFICADO] Estado de '{lista[op - 1].nombre}' conmutado en la memoria.");
+                    Console.ResetColor();
+                    Console.WriteLine("Presiona ENTER para refrescar...");
+                    Console.ReadLine();
                 }
-                Console.ResetColor();
-
-                Console.WriteLine("=======================================================");
-                for (int i = 0; i < lista.Length; i++) {
-                    string estado = lista[i].activo ? "✅ ACTIVO " : "⏸️ INACTIVO";
-                    Console.WriteLine($"  [{lista[i].id}] {lista[i].nombre,-35} {estado}");
+                else if (op == 6)
+                {
+                    GuardarDocumentoConfig(lista, archivoConfig);
+                    Console.WriteLine("Presiona ENTER para continuar...");
+                    Console.ReadLine();
                 }
-                Console.WriteLine("=======================================================");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("\n[EXITO] Los 3 sistemas estan operando juntos de verdad.");
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("\n[!] Número fuera de rango. Selecciona una opción del menú.");
+                    Console.ResetColor();
+                    Console.ReadLine();
+                }
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\n[!] Entrada no válida. Coloca un número limpio.");
                 Console.ResetColor();
+                Console.ReadLine();
             }
         }
-        Console.WriteLine("\nSesion de consola finalizada.");
     }
 }
