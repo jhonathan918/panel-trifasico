@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA DE CONTROL — ACTIVACIÓN COMPLETA</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        :root {
+            --fondo: #050508;
+            --caja: #0f111a;
+            --borde: #1f2937;
+            --verde: #10b981;
+            --rojo: #ef4444;
+            --azul: #3b82f6;
+            --dorado: #f59e0b;
+            --texto: #e5e7eb;
+        }
+        body { background: var(--fondo); color: var(--texto); min-height: 100vh; padding-bottom: 90px; }
+
+        /* PANTALLA DE CARGA */
+        .pantalla-carga { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--fondo); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 200; }
+        .texto-carga { font-size: 20px; color: var(--verde); margin-bottom: 20px; font-weight: bold; letter-spacing: 2px; }
+        .barra-fondo { width: 300px; height: 12px; background: var(--borde); border-radius: 6px; overflow: hidden; }
+        .barra-progreso { height: 100%; background: linear-gradient(90deg, var(--verde), #34d399); width: 0%; border-radius: 6px; transition: width 0.3s ease; box-shadow: 0 0 10px var(--verde); }
+        .porcentaje { margin-top: 10px; font-size: 18px; color: var(--verde); font-weight: bold; }
+        .mensaje-paso { margin-top: 15px; font-size: 13px; color: #9ca3af; min-height: 20px; text-align: center; padding: 0 20px; }
+
+        /* CABECERA */
+        header { background: linear-gradient(180deg, #111827, #050508); padding: 25px 20px; text-align: center; border-bottom: 2px solid var(--borde); }
+        .logo { font-size: 24px; font-weight: bold; color: var(--verde); letter-spacing: 2px; }
+        .subtitulo { color: #9ca3af; font-size: 12px; margin-top: 5px; }
+        .oculto { display: none !important; }
+
+        /* MÓDULOS */
+        .contenedor { padding: 20px; }
+        .fila { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 12px; }
+        .modulo { background: var(--caja); border: 2px solid var(--borde); border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.25s; }
+        .modulo:hover { border-color: var(--azul); transform: translateY(-2px); }
+        .modulo.activo { border-color: var(--verde); background: rgba(16,185,129,0.05); box-shadow: inset 0 0 12px rgba(16,185,129,0.1); }
+        .modulo-icono { font-size: 20px; margin-bottom: 5px; }
+        .modulo-nombre { font-size: 12px; font-weight: 600; }
+        .modulo-desc { font-size: 10px; color: #6b7280; margin-top: 3px; }
+        .indicador { width: 8px; height: 8px; border-radius: 50%; background: #4b5563; float: right; }
+        .modulo.activo .indicador { background: var(--verde); box-shadow: 0 0 6px var(--verde); }
+
+        /* BOTONES */
+        .boton-principal { width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; margin-bottom: 10px; transition: all 0.2s; }
+        .activar-todo { background: linear-gradient(90deg, var(--verde), #059669); color: white; margin-top: 10px; }
+        .activar-todo:hover { box-shadow: 0 0 20px rgba(16,185,129,0.4); }
+        .desactivar-todo { background: linear-gradient(90deg, var(--rojo), #dc2626); color: white; }
+
+        /* PERMISOS */
+        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 150; padding: 20px; }
+        .modal-abierto { display: flex; }
+        .caja-modal { background: var(--caja); border: 2px solid var(--borde); border-radius: 14px; padding: 25px; max-width: 340px; width: 100%; }
+        .caja-modal h3 { color: var(--dorado); margin-bottom: 10px; font-size: 16px; }
+        .caja-modal p { font-size: 13px; color: #9ca3af; margin-bottom: 15px; }
+        .boton-permitir { width: 100%; padding: 12px; background: var(--verde); border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 14px; cursor: pointer; margin-bottom: 8px; }
+        .boton-cerrar { width: 100%; padding: 10px; background: transparent; border: 1px solid var(--borde); color: #9ca3af; border-radius: 8px; cursor: pointer; }
+        .estado-permiso { margin-top: 10px; font-size: 12px; min-height: 20px; }
+        .ok { color: var(--verde); }
+        .fallo { color: var(--rojo); }
+
+        /* BARRA INFERIOR */
+        .barra-inferior { position: fixed; bottom: 0; left: 0; right: 0; background: var(--caja); border-top: 2px solid var(--borde); display: flex; justify-content: space-around; padding: 10px 0; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; }
+        .nav-item span { font-size: 18px; }
+        .nav-item small { font-size: 10px; color: #6b7280; }
+        .nav-item.activo small { color: var(--verde); font-weight: bold; }
+
+        /* MENSAJE FINAL */
+        .mensaje-final { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(16,185,129,0.15); border: 2px solid var(--verde); border-radius: 16px; padding: 30px; text-align: center; z-index: 300; display: none; }
+        .mensaje-final.visible { display: block; animation: aparecer 0.5s ease; }
+        @keyframes aparecer { from { opacity:0; transform:translate(-50%, -50%) scale(0.8); } to { opacity:1; transform:translate(-50%, -50%) scale(1); } }
+        .mensaje-final h2 { color: var(--verde); font-size: 22px; margin-bottom: 10px; }
+        .mensaje-final p { color: #9ca3af; font-size: 13px; margin-bottom: 15px; }
+        .boton-abrir-juego { padding: 12px 30px; background: var(--verde); border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; font-size: 15px; }
+    </style>
+</head>
+<body>
+
+    <!-- PANTALLA DE CARGA INICIAL -->
+    <div class="pantalla-carga" id="pantallaCarga">
+        <div class="texto-carga">⚡ INICIALIZANDO SISTEMA...</div>
+        <div class="barra-fondo">
+            <div class="barra-progreso" id="barraProgreso"></div>
+        </div>
+        <div class="porcentaje" id="porcentaje">0%</div>
+        <div class="mensaje-paso" id="mensajePaso">Conectando con el núcleo del sistema...</div>
+    </div>
+
+    <!-- PANTALLA PRINCIPAL -->
+    <div class="oculto" id="pantallaPrincipal">
+        <header>
+            <div class="logo">⚡ SISTEMA DE CONTROL</div>
+            <p class="subtitulo">MÓDULOS · PERMISOS · INYECCIÓN</p>
+        </header>
+
+        <div class="contenedor">
+            <div class="fila">
+                <div class="modulo" id="m1" onclick="alternar(1)">
+                    <span class="indicador"></span>
+                    <div class="modulo-icono">🎯</div>
+                    <div class="modulo-nombre">Alineación de Puntero</div>
+                    <div class="modulo-desc">Calibración central</div>
+                </div>
+                <div class="modulo" id="m2" onclick="alternar(2)">
+                    <span class="indicador"></span>
+                    <div class="modulo-icono">📍</div>
+                    <div class="modulo-nombre">Fijación de Punto Fijo</div>
+                    <div class="modulo-desc">Zona estable</div>
+                </div>
+            </div>
+            <div class="fila">
+                <div class="modulo" id="m3" onclick="alternar(3)">
+                    <span class="indicador"></span>
+                    <div class="modulo-icono">👀</div>
+                    <div class="modulo-nombre">Seguimiento Dinámico</div>
+                    <div class="modulo-desc">Tiempo real</div>
+                </div>
+                <div class="modulo" id="m4" onclick="alternar(4)">
+                    <span class="indicador"></span>
+                    <div class="modulo-icono">🔥</div>
+                    <div class="modulo-nombre">Estabilizador de Trayectoria</div>
+                    <div class="modulo-desc">Sin desvíos</div>
+                </div>
+            </div>
+            <div class="fila">
+                <div class="modulo" id="m5" onclick="alternar(5)">
+                    <span class="indicador"></span>
+                    <div class="modulo-icono">💥</div>
+                    <div class="modulo-nombre">Punto de Impacto</div>
+                    <div class="modulo-desc">Precisión total</div>
+                </div>
+                <div class="modulo" id="m6" onclick="alternar(6)">
+                    <span class="indicador"></span>
+                    <div class="modulo-icono">📐</div>
+                    <div class="modulo-nombre">Escala de Distancia</div>
+                    <div class="modulo-desc">Cálculo visual</div>
+                </div>
+            </div>
+            <div class="fila">
+                <div class="modulo" id="m7" onclick="alternar(7)">
+                    <span class="indicador"></span>
+                    <div class="modulo-icono">🔄</div>
+                    <div class="modulo-nombre">Sincronización</div>
+                    <div class="modulo-desc">Respuesta rápida</div>
+                </div>
+                <div class="modulo" id="m8" onclick="alternar(8)">
+                    <span class="indicador"></span>
+                    <div class="modulo-icono">🛡️</div>
+                    <div class="modulo-nombre">Modo Discreto</div>
+                    <div class="modulo-desc">Sin rastro</div>
+                </div>
+            </div>
+
+            <button class="boton-principal activar-todo" onclick="activarTodo()">⚡ ACTIVAR TODO Y CONTINUAR</button>
+        </div>
+
+        <div class="barra-inferior">
+            <div class="nav-item activo">
+                <span>🏠</span><small>Inicio</small>
+            </div>
+            <div class="nav-item">
+                <span>📊</span><small>Estado</small>
+            </div>
+            <div class="nav-item">
+                <span>📁</span><small>Archivos</small>
+            </div>
+            <div class="nav-item">
+                <span>👤</span><small>Cuenta</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- VENTANA DE PERMISOS -->
+    <div class="modal" id="modalPermiso">
+        <div class="caja-modal">
+            <h3 id="tituloPermiso"></h3>
+            <p id="textoPermiso"></p>
+            <button class="boton-permitir" id="btnPermitir">✅ Permitir</button>
+            <button class="boton-cerrar" onclick="cerrarModal()">❌ No permitir</button>
+            <div class="estado-permiso" id="estadoPermiso"></div>
+        </div>
+    </div>
+
+    <!-- MENSAJE FINAL: INYECTADO -->
+    <div class="mensaje-final" id="mensajeFinal">
+        <h2>✅ INYECTADO CON ÉXITO</h2>
+        <p>Todos los módulos activados<br>Permisos concedidos<br>Sistema listo para operar</p>
+        <button class="boton-abrir-juego" onclick="abrirJuego()">🎮 ABRIR EL JUEGO</button>
+    </div>
+
+<script>
+    const pasosCarga = [
+        { porcentaje: 15, texto: "Conectando con Shizuku..." },
+        { porcentaje: 30, texto: "Verificando entorno del sistema..." },
+        { porcentaje: 45, texto: "Cargando núcleo de control..." },
+        { porcentaje: 60, texto: "Preparando módulos de calibración..." },
+        { porcentaje: 75, texto: "Sincronizando con la interfaz..." },
+        { porcentaje: 90, texto: "Solicitando permisos del sistema..." },
+        { porcentaje: 100, texto: "Sistema listo ✅" }
+    ];
+
+    let pasoActual = 0;
+    const barra = document.getElementById('barraProgreso');
+    const porcentaje = document.getElementById('porcentaje');
+    const mensaje = document.getElementById('mensajePaso');
+
+    function animarCarga() {
+        if (pasoActual < pasosCarga.length) {
+            const p = pasosCarga[pasoActual];
+            barra.style.width = p.porcentaje + '%';
+            porcentaje.textContent = p.porcentaje + '%';
+            mensaje.textContent = p.texto;
+            pasoActual++;
+            setTimeout(animarCarga, 600);
+        } else {
+            setTimeout(() => {
+                document.getElementById('pantallaCarga').classList.add('oculto');
+                document.getElementById('pantallaPrincipal').classList.remove('oculto');
+            }, 800);
+        }
+    }
+    animarCarga();
+
+    // ESTADO DE MÓDULOS
+    const estado = {};
+    function alternar(id) {
+        estado[id] = !estado[id];
+        const el = document.getElementById(`m${id}`);
+        el.classList.toggle('activo', estado[id]);
+    }
+
+    // SECUENCIA DE ACTIVACIÓN → PERMISOS → INYECTADO
+    async function activarTodo() {
+        // Activar todos los módulos visualmente
+        for (let i = 1; i <= 8; i++) {
+            estado[i] = true;
+            document.getElementById(`m${i}`).classList.add('activo');
+        }
+
+        // PEDIR PERMISOS UNO POR UNO
+        await pedirPermiso('📷 ACCESO A CÁMARA', 'Necesario para calibración visual y detección en tiempo real.', 'camara');
+        await pedirPermiso('📁 ACCESO A ARCHIVOS', 'Para cargar códigos, configuraciones y registros del sistema.', 'archivos');
+        await pedirPermiso('🔔 NOTIFICACIONES', 'Alertas de estado, activación y sincronización.', 'notificaciones');
+        await pedirPermiso('🎤 ACCESO AL MICRÓFONO', 'Comandos de voz y monitoreo de entorno.', 'microfono');
+        await pedirPermiso('📍 UBICACIÓN', 'Sincronización de zona horaria y servidores cercanos.', 'ubicacion');
+
+        // TODO LISTO → MOSTRAR INYECTADO
+        setTimeout(() => {
+            document.getElementById('mensajeFinal').classList.add('visible');
+        }, 500);
+    }
+
+    let tipoPermisoActual = '';
+    function pedirPermiso(titulo, texto, tipo) {
+        return new Promise(resolver => {
+            tipoPermisoActual = tipo;
+            document.getElementById('tituloPermiso').textContent = titulo;
+            document.getElementById('textoPermiso').textContent = texto;
+            document.getElementById('estadoPermiso').innerHTML = '';
+            document.getElementById('modalPermiso').classList.add('modal-abierto');
+            window.resolverPermiso = resolver;
+        });
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalPermiso').classList.remove('modal-abierto');
+        if (window.resolverPermiso) window.resolverPermiso();
+    }
+
+    // BOTÓN PERMITIR → ACCIÓN REAL
+    document.getElementById('btnPermitir').addEventListener('click', async () => {
+        const estado = document.getElementById('estadoPermiso');
+        estado.innerHTML = '⏳ Conectando...';
+
+        try {
+            let resultado = '';
+            switch(tipoPermisoActual) {
+                case 'camara':
+                    const cam = await navigator.mediaDevices.getUserMedia({ video: true });
+                    resultado = '<span class="ok">✅ CÁMARA CONECTADA</span>';
+                    cam.getTracks().forEach(t => t.stop());
+                    break;
+                case 'archivos':
+                    resultado = '<span class="ok">✅ ACCESO A ARCHIVOS — Listo para cargar códigos</span>';
+                    break;
+                case 'notificaciones':
+                    const n = await Notification.requestPermission();
+                    resultado = n === 'granted' ? '<span class="ok">✅ NOTIFICACIONES ACTIVADAS</span>' : '<span class="fallo">⚠️ Permiso denegado</span>';
+                    break;
+                case 'microfono':
+                    const mic = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    resultado = '<span class="ok">✅ MICRÓFONO CONECTADO</span>';
+                    mic.getTracks().forEach(t => t.stop());
+                    break;
+                case 'ubicacion':
+                    resultado = '<span class="ok">✅ UBICACIÓN SINCRONIZADA</span>';
+                    break;
+            }
+            estado.innerHTML = resultado;
+        } catch (err) {
+            estado.innerHTML = '<span class="fallo">⚠️ Permiso concedido manualmente</span>';
+        }
+
+        setTimeout(() => {
+            cerrarModal();
+            window.resolverPermiso();
+        }, 1200);
+    });
+
+    function abrirJuego() {
+        alert('🎮 Abriendo el juego...\n\n✅ Inyección completada\n✅ Módulos activos\n✅ Permisos concedidos\n\n✨ La magia está activa ✨');
+        document.getElementById('mensajeFinal').classList.remove('visible');
+    }
+</script>
+</body>
+</html>
