@@ -3,318 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA DE CONTROL — ACTIVACIÓN COMPLETA</title>
+    <title>AUXILIO — BRAZZARCHIVE</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        :root {
-            --fondo: #050508;
-            --caja: #0f111a;
-            --borde: #1f2937;
-            --verde: #10b981;
-            --rojo: #ef4444;
-            --azul: #3b82f6;
-            --dorado: #f59e0b;
-            --texto: #e5e7eb;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        body { background: #000; color: #fff; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+
+        /* PANEL PRINCIPAL — POTENCIADO */
+        .panel {
+            width: 100%; max-width: 375px;
+            background: linear-gradient(145deg, #0c0c0c, #1a1a1a);
+            border-radius: 22px;
+            padding: 32px 24px;
+            border: 1px solid #2a2a2a;
+            box-shadow: 0 0 30px rgba(0, 122, 255, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
         }
-        body { background: var(--fondo); color: var(--texto); min-height: 100vh; padding-bottom: 90px; }
+        .cabecera { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+        .titulo { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(90deg, #fff, #00a2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .version { font-size: 12px; color: #666; border: 1px solid #2a2a2a; padding: 4px 10px; border-radius: 12px; background: #151515; }
 
-        /* PANTALLA DE CARGA */
-        .pantalla-carga { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--fondo); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 200; }
-        .texto-carga { font-size: 20px; color: var(--verde); margin-bottom: 20px; font-weight: bold; letter-spacing: 2px; }
-        .barra-fondo { width: 300px; height: 12px; background: var(--borde); border-radius: 6px; overflow: hidden; }
-        .barra-progreso { height: 100%; background: linear-gradient(90deg, var(--verde), #34d399); width: 0%; border-radius: 6px; transition: width 0.3s ease; box-shadow: 0 0 10px var(--verde); }
-        .porcentaje { margin-top: 10px; font-size: 18px; color: var(--verde); font-weight: bold; }
-        .mensaje-paso { margin-top: 15px; font-size: 13px; color: #9ca3af; min-height: 20px; text-align: center; padding: 0 20px; }
+        /* CAJA DE ESTADO — POTENCIADA */
+        .caja-estado {
+            background: linear-gradient(180deg, #141414, #1a1a1a);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 28px;
+            border: 1px solid #222;
+            transition: all 0.4s ease;
+        }
+        .caja-estado.borde-activo { 
+            border-color: #00a2ff; 
+            box-shadow: 0 0 20px rgba(0, 162, 255, 0.4), inset 0 0 15px rgba(0, 162, 255, 0.1);
+            background: linear-gradient(180deg, #141414, #1c2c3c);
+        }
+        .etiqueta-sistema { font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .texto-estado { font-size: 18px; font-weight: 600; color: #666; transition: all 0.4s; }
+        .texto-estado.activo { color: #00ff88; text-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
+        .punto { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #444; margin-right: 8px; transition: all 0.4s; }
+        .punto.activo { background: #00ff88; box-shadow: 0 0 12px #00ff88, 0 0 4px #00ff88 inset; animation: pulso 1.2s infinite; }
+        @keyframes pulso {
+            0% { box-shadow: 0 0 12px #00ff88; }
+            50% { box-shadow: 0 0 20px #00ff88, 0 0 30px rgba(0,255,136,0.4); }
+            100% { box-shadow: 0 0 12px #00ff88; }
+        }
 
-        /* CABECERA */
-        header { background: linear-gradient(180deg, #111827, #050508); padding: 25px 20px; text-align: center; border-bottom: 2px solid var(--borde); }
-        .logo { font-size: 24px; font-weight: bold; color: var(--verde); letter-spacing: 2px; }
-        .subtitulo { color: #9ca3af; font-size: 12px; margin-top: 5px; }
-        .oculto { display: none !important; }
+        /* INTERRUPTORES — POTENCIADOS */
+        .opcion { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #1a1a1a; transition: opacity 0.3s; }
+        .opcion:hover { opacity: 0.9; }
+        .nombre-opcion { font-size: 16px; color: #dddddd; }
+        .interruptor {
+            width: 51px; height: 29px; background: #2a2a2a; border-radius: 15px; position: relative; transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .interruptor.encendido { 
+            background: linear-gradient(180deg, #00a2ff, #0077cc); 
+            box-shadow: 0 0 10px rgba(0, 162, 255, 0.4), inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .bola {
+            position: absolute; top: 2px; left: 2px; width: 25px; height: 25px; background: #000000; border-radius: 50%; transition: transform 0.3s ease, background 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .interruptor.encendido .bola { 
+            transform: translateX(22px); 
+            background: #ffffff; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
 
-        /* MÓDULOS */
-        .contenedor { padding: 20px; }
-        .fila { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 12px; }
-        .modulo { background: var(--caja); border: 2px solid var(--borde); border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.25s; }
-        .modulo:hover { border-color: var(--azul); transform: translateY(-2px); }
-        .modulo.activo { border-color: var(--verde); background: rgba(16,185,129,0.05); box-shadow: inset 0 0 12px rgba(16,185,129,0.1); }
-        .modulo-icono { font-size: 20px; margin-bottom: 5px; }
-        .modulo-nombre { font-size: 12px; font-weight: 600; }
-        .modulo-desc { font-size: 10px; color: #6b7280; margin-top: 3px; }
-        .indicador { width: 8px; height: 8px; border-radius: 50%; background: #4b5563; float: right; }
-        .modulo.activo .indicador { background: var(--verde); box-shadow: 0 0 6px var(--verde); }
+        /* FOV — POTENCIADO */
+        .zona-fov { margin-top: 24px; margin-bottom: 28px; }
+        .etiqueta-fov { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .nombre-fov { font-size: 15px; color: #dddddd; }
+        .valor-fov { font-size: 15px; color: #00ff88; font-weight: 700; text-shadow: 0 0 6px rgba(0,255,136,0.4); }
+        .barra-fov {
+            width: 100%; height: 7px; background: #222222; border-radius: 4px; outline: none;
+            -webkit-appearance: none; appearance: none;
+            transition: background 0.3s ease;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+        }
+        .barra-fov.activa { 
+            background: linear-gradient(90deg, #0099ff, #00ff88); 
+            box-shadow: 0 0 8px rgba(0, 162, 255, 0.3);
+        }
+        .barra-fov::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 24px; height: 24px; background: #ffffff; border-radius: 50%; cursor: pointer; border: 2px solid #00a2ff;
+            box-shadow: 0 0 10px rgba(0, 162, 255, 0.5);
+        }
 
-        /* BOTONES */
-        .boton-principal { width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; margin-bottom: 10px; transition: all 0.2s; }
-        .activar-todo { background: linear-gradient(90deg, var(--verde), #059669); color: white; margin-top: 10px; }
-        .activar-todo:hover { box-shadow: 0 0 20px rgba(16,185,129,0.4); }
-        .desactivar-todo { background: linear-gradient(90deg, var(--rojo), #dc2626); color: white; }
+        /* BOTÓN PRINCIPAL — POTENCIADO */
+        .boton-principal {
+            width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.4s ease;
+            background: linear-gradient(180deg, #ffffff, #e0e0e0); color: #000000;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+        }
+        .boton-principal:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,255,255,0.15); }
+        .boton-principal:active { transform: translateY(0); }
+        .boton-principal.cargando { 
+            background: linear-gradient(180deg, #333333, #2a2a2a); color: #888888; cursor: not-allowed; transform: none;
+            animation: cargando 1s infinite;
+        }
+        @keyframes cargando {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        .boton-principal.terminado { 
+            background: linear-gradient(180deg, #00aa55, #008844); color: #ffffff; 
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+        }
 
-        /* PERMISOS */
-        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 150; padding: 20px; }
-        .modal-abierto { display: flex; }
-        .caja-modal { background: var(--caja); border: 2px solid var(--borde); border-radius: 14px; padding: 25px; max-width: 340px; width: 100%; }
-        .caja-modal h3 { color: var(--dorado); margin-bottom: 10px; font-size: 16px; }
-        .caja-modal p { font-size: 13px; color: #9ca3af; margin-bottom: 15px; }
-        .boton-permitir { width: 100%; padding: 12px; background: var(--verde); border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 14px; cursor: pointer; margin-bottom: 8px; }
-        .boton-cerrar { width: 100%; padding: 10px; background: transparent; border: 1px solid var(--borde); color: #9ca3af; border-radius: 8px; cursor: pointer; }
-        .estado-permiso { margin-top: 10px; font-size: 12px; min-height: 20px; }
-        .ok { color: var(--verde); }
-        .fallo { color: var(--rojo); }
+        /* VENTANA DE ARCHIVOS — POTENCIADA */
+        .caja-modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+            background: linear-gradient(180deg, #1c1c1e, #252528); border-radius: 16px; padding: 26px; width: 90%; max-width: 320px;
+            border: 1px solid #3a3a3c; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 100;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05) inset;
+            backdrop-filter: blur(20px);
+        }
+        .caja-modal.visible { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
+        .titulo-modal { font-size: 19px; font-weight: 700; text-align: center; margin-bottom: 8px; color: #ffffff; }
+        .subtitulo-modal { font-size: 14px; color: #999999; text-align: center; margin-bottom: 22px; }
+        .lista-archivos { text-align: center; margin-bottom: 24px; }
+        .archivo { 
+            padding: 10px 12px; font-size: 15px; color: #ffffff; background: #2c2c2e; border-radius: 8px; margin-bottom: 8px;
+            border: 1px solid #3a3a3c; transition: all 0.2s;
+        }
+        .archivo:hover { background: #343436; border-color: #00a2ff; }
+        .boton-continuar {
+            width: 100%; padding: 13px;
+            background: linear-gradient(180deg, #007AFF, #0055dd); color: #ffffff; border: none;
+            border-radius: 10px; font-size: 17px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+        .boton-continuar:hover { background: linear-gradient(180deg, #0088FF, #0066ee); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 122, 255, 0.4); }
+        .boton-continuar:active { transform: translateY(0); }
 
-        /* BARRA INFERIOR */
-        .barra-inferior { position: fixed; bottom: 0; left: 0; right: 0; background: var(--caja); border-top: 2px solid var(--borde); display: flex; justify-content: space-around; padding: 10px 0; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; }
-        .nav-item span { font-size: 18px; }
-        .nav-item small { font-size: 10px; color: #6b7280; }
-        .nav-item.activo small { color: var(--verde); font-weight: bold; }
-
-        /* MENSAJE FINAL */
-        .mensaje-final { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(16,185,129,0.15); border: 2px solid var(--verde); border-radius: 16px; padding: 30px; text-align: center; z-index: 300; display: none; }
-        .mensaje-final.visible { display: block; animation: aparecer 0.5s ease; }
-        @keyframes aparecer { from { opacity:0; transform:translate(-50%, -50%) scale(0.8); } to { opacity:1; transform:translate(-50%, -50%) scale(1); } }
-        .mensaje-final h2 { color: var(--verde); font-size: 22px; margin-bottom: 10px; }
-        .mensaje-final p { color: #9ca3af; font-size: 13px; margin-bottom: 15px; }
-        .boton-abrir-juego { padding: 12px 30px; background: var(--verde); border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; font-size: 15px; }
+        /* PIE */
+        .pie { text-align: center; margin-top: 20px; font-size: 11px; color: #444444; }
     </style>
 </head>
 <body>
 
-    <!-- PANTALLA DE CARGA INICIAL -->
-    <div class="pantalla-carga" id="pantallaCarga">
-        <div class="texto-carga">⚡ INICIALIZANDO SISTEMA...</div>
-        <div class="barra-fondo">
-            <div class="barra-progreso" id="barraProgreso"></div>
-        </div>
-        <div class="porcentaje" id="porcentaje">0%</div>
-        <div class="mensaje-paso" id="mensajePaso">Conectando con el núcleo del sistema...</div>
+<div class="panel" id="panelPrincipal">
+    <div class="cabecera">
+        <h1 class="titulo">AUXILIO</h1>
+        <span class="version">FREE v1.0</span>
     </div>
 
-    <!-- PANTALLA PRINCIPAL -->
-    <div class="oculto" id="pantallaPrincipal">
-        <header>
-            <div class="logo">⚡ SISTEMA DE CONTROL</div>
-            <p class="subtitulo">MÓDULOS · PERMISOS · INYECCIÓN</p>
-        </header>
-
-        <div class="contenedor">
-            <div class="fila">
-                <div class="modulo" id="m1" onclick="alternar(1)">
-                    <span class="indicador"></span>
-                    <div class="modulo-icono">🎯</div>
-                    <div class="modulo-nombre">Alineación de Puntero</div>
-                    <div class="modulo-desc">Calibración central</div>
-                </div>
-                <div class="modulo" id="m2" onclick="alternar(2)">
-                    <span class="indicador"></span>
-                    <div class="modulo-icono">📍</div>
-                    <div class="modulo-nombre">Fijación de Punto Fijo</div>
-                    <div class="modulo-desc">Zona estable</div>
-                </div>
-            </div>
-            <div class="fila">
-                <div class="modulo" id="m3" onclick="alternar(3)">
-                    <span class="indicador"></span>
-                    <div class="modulo-icono">👀</div>
-                    <div class="modulo-nombre">Seguimiento Dinámico</div>
-                    <div class="modulo-desc">Tiempo real</div>
-                </div>
-                <div class="modulo" id="m4" onclick="alternar(4)">
-                    <span class="indicador"></span>
-                    <div class="modulo-icono">🔥</div>
-                    <div class="modulo-nombre">Estabilizador de Trayectoria</div>
-                    <div class="modulo-desc">Sin desvíos</div>
-                </div>
-            </div>
-            <div class="fila">
-                <div class="modulo" id="m5" onclick="alternar(5)">
-                    <span class="indicador"></span>
-                    <div class="modulo-icono">💥</div>
-                    <div class="modulo-nombre">Punto de Impacto</div>
-                    <div class="modulo-desc">Precisión total</div>
-                </div>
-                <div class="modulo" id="m6" onclick="alternar(6)">
-                    <span class="indicador"></span>
-                    <div class="modulo-icono">📐</div>
-                    <div class="modulo-nombre">Escala de Distancia</div>
-                    <div class="modulo-desc">Cálculo visual</div>
-                </div>
-            </div>
-            <div class="fila">
-                <div class="modulo" id="m7" onclick="alternar(7)">
-                    <span class="indicador"></span>
-                    <div class="modulo-icono">🔄</div>
-                    <div class="modulo-nombre">Sincronización</div>
-                    <div class="modulo-desc">Respuesta rápida</div>
-                </div>
-                <div class="modulo" id="m8" onclick="alternar(8)">
-                    <span class="indicador"></span>
-                    <div class="modulo-icono">🛡️</div>
-                    <div class="modulo-nombre">Modo Discreto</div>
-                    <div class="modulo-desc">Sin rastro</div>
-                </div>
-            </div>
-
-            <button class="boton-principal activar-todo" onclick="activarTodo()">⚡ ACTIVAR TODO Y CONTINUAR</button>
-        </div>
-
-        <div class="barra-inferior">
-            <div class="nav-item activo">
-                <span>🏠</span><small>Inicio</small>
-            </div>
-            <div class="nav-item">
-                <span>📊</span><small>Estado</small>
-            </div>
-            <div class="nav-item">
-                <span>📁</span><small>Archivos</small>
-            </div>
-            <div class="nav-item">
-                <span>👤</span><small>Cuenta</small>
-            </div>
-        </div>
+    <div class="caja-estado" id="cajaEstado">
+        <div class="etiqueta-sistema">SYSTEM STATUS</div>
+        <div class="texto-estado" id="textoEstado"><span class="punto"></span>DESACTIVADO</div>
     </div>
 
-    <!-- VENTANA DE PERMISOS -->
-    <div class="modal" id="modalPermiso">
-        <div class="caja-modal">
-            <h3 id="tituloPermiso"></h3>
-            <p id="textoPermiso"></p>
-            <button class="boton-permitir" id="btnPermitir">✅ Permitir</button>
-            <button class="boton-cerrar" onclick="cerrarModal()">❌ No permitir</button>
-            <div class="estado-permiso" id="estadoPermiso"></div>
-        </div>
+    <div class="opcion">
+        <span class="nombre-opcion">Aimbot</span>
+        <div class="interruptor" id="swAimbot"><div class="bola"></div></div>
+    </div>
+    <div class="opcion">
+        <span class="nombre-opcion">Precision</span>
+        <div class="interruptor" id="swPrecision"><div class="bola"></div></div>
+    </div>
+    <div class="opcion">
+        <span class="nombre-opcion">No recoil</span>
+        <div class="interruptor" id="swNoRecoil"><div class="bola"></div></div>
+    </div>
+    <div class="opcion">
+        <span class="nombre-opcion">headshot</span>
+        <div class="interruptor" id="swHeadshot"><div class="bola"></div></div>
     </div>
 
-    <!-- MENSAJE FINAL: INYECTADO -->
-    <div class="mensaje-final" id="mensajeFinal">
-        <h2>✅ INYECTADO CON ÉXITO</h2>
-        <p>Todos los módulos activados<br>Permisos concedidos<br>Sistema listo para operar</p>
-        <button class="boton-abrir-juego" onclick="abrirJuego()">🎮 ABRIR EL JUEGO</button>
+    <div class="zona-fov">
+        <div class="etiqueta-fov">
+            <span class="nombre-fov">FOV</span>
+            <span class="valor-fov" id="valorFov">0</span>
+        </div>
+        <input type="range" class="barra-fov" id="barraFov" min="0" max="360" value="0" oninput="document.getElementById('valorFov').textContent=this.value; this.classList.toggle('activa', this.value>0)">
     </div>
+
+    <button class="boton-principal" id="botonPrincipal" onclick="iniciar()">ACTIVAR AUXILIO DE MIRA</button>
+
+    <div class="pie">AUXILIO DE MIRA · BRAZZARCHIVE</div>
+</div>
+
+<div class="caja-modal" id="modalArchivos">
+    <h3 class="titulo-modal">Archivos seleccionados</h3>
+    <p class="subtitulo-modal">Se seleccionaron 2 archivo(s):</p>
+    <div class="lista-archivos">
+        <div class="archivo">Archivo 1.txt</div>
+        <div class="archivo">Archivo 2.txt</div>
+    </div>
+    <button class="boton-continuar" onclick="continuar()">Continuar</button>
+</div>
 
 <script>
-    const pasosCarga = [
-        { porcentaje: 15, texto: "Conectando con Shizuku..." },
-        { porcentaje: 30, texto: "Verificando entorno del sistema..." },
-        { porcentaje: 45, texto: "Cargando núcleo de control..." },
-        { porcentaje: 60, texto: "Preparando módulos de calibración..." },
-        { porcentaje: 75, texto: "Sincronizando con la interfaz..." },
-        { porcentaje: 90, texto: "Solicitando permisos del sistema..." },
-        { porcentaje: 100, texto: "Sistema listo ✅" }
-    ];
+function iniciar() {
+    const boton = document.getElementById('botonPrincipal');
+    boton.classList.add('cargando');
+    boton.textContent = 'ACTIVANDO...';
 
-    let pasoActual = 0;
-    const barra = document.getElementById('barraProgreso');
-    const porcentaje = document.getElementById('porcentaje');
-    const mensaje = document.getElementById('mensajePaso');
+    document.querySelectorAll('.interruptor').forEach(sw => sw.classList.add('encendido'));
+    
+    document.getElementById('barraFov').value = 360;
+    document.getElementById('barraFov').classList.add('activa');
+    document.getElementById('valorFov').textContent = '360';
 
-    function animarCarga() {
-        if (pasoActual < pasosCarga.length) {
-            const p = pasosCarga[pasoActual];
-            barra.style.width = p.porcentaje + '%';
-            porcentaje.textContent = p.porcentaje + '%';
-            mensaje.textContent = p.texto;
-            pasoActual++;
-            setTimeout(animarCarga, 600);
-        } else {
-            setTimeout(() => {
-                document.getElementById('pantallaCarga').classList.add('oculto');
-                document.getElementById('pantallaPrincipal').classList.remove('oculto');
-            }, 800);
-        }
-    }
-    animarCarga();
+    document.getElementById('textoEstado').innerHTML = '<span class="punto"></span>ACTIVANDO...';
 
-    // ESTADO DE MÓDULOS
-    const estado = {};
-    function alternar(id) {
-        estado[id] = !estado[id];
-        const el = document.getElementById(`m${id}`);
-        el.classList.toggle('activo', estado[id]);
-    }
+    setTimeout(() => {
+        document.getElementById('modalArchivos').classList.add('visible');
+    }, 1200);
+}
 
-    // SECUENCIA DE ACTIVACIÓN → PERMISOS → INYECTADO
-    async function activarTodo() {
-        // Activar todos los módulos visualmente
-        for (let i = 1; i <= 8; i++) {
-            estado[i] = true;
-            document.getElementById(`m${i}`).classList.add('activo');
-        }
+function continuar() {
+    document.getElementById('modalArchivos').classList.remove('visible');
 
-        // PEDIR PERMISOS UNO POR UNO
-        await pedirPermiso('📷 ACCESO A CÁMARA', 'Necesario para calibración visual y detección en tiempo real.', 'camara');
-        await pedirPermiso('📁 ACCESO A ARCHIVOS', 'Para cargar códigos, configuraciones y registros del sistema.', 'archivos');
-        await pedirPermiso('🔔 NOTIFICACIONES', 'Alertas de estado, activación y sincronización.', 'notificaciones');
-        await pedirPermiso('🎤 ACCESO AL MICRÓFONO', 'Comandos de voz y monitoreo de entorno.', 'microfono');
-        await pedirPermiso('📍 UBICACIÓN', 'Sincronización de zona horaria y servidores cercanos.', 'ubicacion');
+    const boton = document.getElementById('botonPrincipal');
+    boton.textContent = 'INYECTANDO...';
 
-        // TODO LISTO → MOSTRAR INYECTADO
+    setTimeout(() => {
+        const cajaEstado = document.getElementById('cajaEstado');
+        const textoEstado = document.getElementById('textoEstado');
+        
+        cajaEstado.classList.add('borde-activo');
+        textoEstado.innerHTML = '<span class="punto activo"></span>ACTIVADO';
+        textoEstado.classList.add('activo');
+        boton.classList.remove('cargando');
+        boton.classList.add('terminado');
+        boton.textContent = 'INYECTADO!';
+
         setTimeout(() => {
-            document.getElementById('mensajeFinal').classList.add('visible');
+            window.location.href = "intent://com.dts.freefireth/#Intent;package=com.dts.freefireth;end";
         }, 500);
-    }
-
-    let tipoPermisoActual = '';
-    function pedirPermiso(titulo, texto, tipo) {
-        return new Promise(resolver => {
-            tipoPermisoActual = tipo;
-            document.getElementById('tituloPermiso').textContent = titulo;
-            document.getElementById('textoPermiso').textContent = texto;
-            document.getElementById('estadoPermiso').innerHTML = '';
-            document.getElementById('modalPermiso').classList.add('modal-abierto');
-            window.resolverPermiso = resolver;
-        });
-    }
-
-    function cerrarModal() {
-        document.getElementById('modalPermiso').classList.remove('modal-abierto');
-        if (window.resolverPermiso) window.resolverPermiso();
-    }
-
-    // BOTÓN PERMITIR → ACCIÓN REAL
-    document.getElementById('btnPermitir').addEventListener('click', async () => {
-        const estado = document.getElementById('estadoPermiso');
-        estado.innerHTML = '⏳ Conectando...';
-
-        try {
-            let resultado = '';
-            switch(tipoPermisoActual) {
-                case 'camara':
-                    const cam = await navigator.mediaDevices.getUserMedia({ video: true });
-                    resultado = '<span class="ok">✅ CÁMARA CONECTADA</span>';
-                    cam.getTracks().forEach(t => t.stop());
-                    break;
-                case 'archivos':
-                    resultado = '<span class="ok">✅ ACCESO A ARCHIVOS — Listo para cargar códigos</span>';
-                    break;
-                case 'notificaciones':
-                    const n = await Notification.requestPermission();
-                    resultado = n === 'granted' ? '<span class="ok">✅ NOTIFICACIONES ACTIVADAS</span>' : '<span class="fallo">⚠️ Permiso denegado</span>';
-                    break;
-                case 'microfono':
-                    const mic = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    resultado = '<span class="ok">✅ MICRÓFONO CONECTADO</span>';
-                    mic.getTracks().forEach(t => t.stop());
-                    break;
-                case 'ubicacion':
-                    resultado = '<span class="ok">✅ UBICACIÓN SINCRONIZADA</span>';
-                    break;
-            }
-            estado.innerHTML = resultado;
-        } catch (err) {
-            estado.innerHTML = '<span class="fallo">⚠️ Permiso concedido manualmente</span>';
-        }
-
-        setTimeout(() => {
-            cerrarModal();
-            window.resolverPermiso();
-        }, 1200);
-    });
-
-    function abrirJuego() {
-        alert('🎮 Abriendo el juego...\n\n✅ Inyección completada\n✅ Módulos activos\n✅ Permisos concedidos\n\n✨ La magia está activa ✨');
-        document.getElementById('mensajeFinal').classList.remove('visible');
-    }
+    }, 1000);
+}
 </script>
 </body>
 </html>
