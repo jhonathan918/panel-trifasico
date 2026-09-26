@@ -5,186 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AUXILIO — BRAZZARCHIVE</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-        body { background: #000; color: #fff; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+        body { background: #000; color: #fff; min-height: 100vh; padding: 20px; }
 
-        /* PANEL PRINCIPAL */
-        .panel {
-            width: 100%; max-width: 380px;
-            background: linear-gradient(145deg, #0c0c0c, #1a1a1a);
-            border-radius: 22px;
-            padding: 25px;
-            border: 1px solid #2a2a2a;
-        }
-        .cabecera {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;
-        }
-        .titulo { font-size: 32px; font-weight: bold; color: #00a2ff; }
-        .version { font-size: 13px; color: #888; background: #1f1f1f; padding: 6px 12px; border-radius: 20px; }
-        .pie { text-align: center; margin-top: 20px; font-size: 12px; color: #555; }
-
-        /* ESTADO */
-        .estado {
-            text-align: center; padding: 15px; background: #151515;
-            border-radius: 12px; margin-bottom: 25px; color: #777; text-transform: uppercase; letter-spacing: 1px;
-        }
+        .panel { max-width: 375px; margin: 0 auto; background: #0f0f0f; border-radius: 20px; padding: 25px; }
+        .cabecera { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .titulo { font-size: 28px; font-weight: bold; color: #00a2ff; }
+        .version { font-size: 13px; color: #777; background: #1a1a1a; padding: 6px 12px; border-radius: 15px; }
+        .estado { text-align: center; padding: 12px; background: #1a1a1a; border-radius: 10px; margin-bottom: 20px; color: #888; text-transform: uppercase; }
         .estado.activo { color: #00ff88; background: #0f2f1f; }
 
-        /* PERSONAJE + ZONAS */
         .contenedor-personaje {
             display: flex; align-items: center; justify-content: space-around;
-            background: #151515; border-radius: 16px; padding: 20px 10px; margin-bottom: 25px;
+            background: #1a1a1a; border-radius: 15px; padding: 20px 10px; margin-bottom: 20px;
         }
-        .personaje { position: relative; width: 120px; height: 200px; }
-        .pelo { position: absolute; top: -2px; left: 50%; transform: translateX(-50%); width: 46px; height: 22px; background: #1a1a1a; border-radius: 50% 50% 0 0; z-index: 4; }
-        .cabeza {
-            width: 42px; height: 42px; background: linear-gradient(180deg, #e0b799, #c99a7b);
-            border-radius: 50%; margin: 0 auto; position: relative; z-index: 3;
-            cursor: pointer; border: 2px solid transparent; transition: 0.25s;
-        }
-        .cabeza.seleccionado { border-color: #00ff88; box-shadow: 0 0 12px rgba(0,255,136,0.4); }
-        .cuello {
-            width: 10px; height: 14px; background: #c99a7b; margin: 0 auto;
-            cursor: pointer; border: 2px solid transparent; transition: 0.25s;
-        }
-        .cuello.seleccionado { border-color: #00ff88; box-shadow: 0 0 12px rgba(0,255,136,0.4); }
-        .torso {
-            width: 58px; height: 65px; background: linear-gradient(180deg, #1a1a1a, #2b2b2b);
-            border-radius: 10px 10px 6px 6px; margin: 0 auto; position: relative;
-            cursor: pointer; border: 2px solid transparent; transition: 0.25s;
-        }
-        .torso.seleccionado { border-color: #00ff88; box-shadow: 0 0 12px rgba(0,255,136,0.4); }
-        .detalle-pecho { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 38px; height: 28px; background: #252525; border-radius: 6px; }
-        .raya-dorada { position: absolute; top: 42px; left: 50%; transform: translateX(-50%); width: 44px; height: 3px; background: #d4b826; }
-        .brazos { display: flex; justify-content: space-between; width: 80px; margin: -4px auto 0; }
-        .brazo { width: 14px; height: 50px; background: linear-gradient(180deg, #2b2b2b, #1f1f1f); border-radius: 7px; }
-        .mano { width: 14px; height: 14px; background: #c99a7b; border-radius: 50%; margin-top: -2px; }
-        .cinturon { width: 52px; height: 10px; background: #443810; margin: 0 auto; border-radius: 2px; }
-        .hebilla { width: 12px; height: 8px; background: #d4b826; margin: 0 auto; border-radius: 2px; }
-        .piernas { display: flex; justify-content: space-between; width: 54px; margin: 4px auto 0; }
-        .pierna { width: 18px; height: 52px; background: linear-gradient(180deg, #1a1a1a, #222); border-radius: 4px 4px 8px 8px; }
-        .zapato { width: 20px; height: 12px; background: #d4b826; border-radius: 4px 4px 6px 6px; margin-top: -2px; }
+        .personaje { width: 110px; height: 190px; position: relative; }
+        .pelo { position: absolute; top: -2px; left: 50%; transform: translateX(-50%); width: 44px; height: 20px; background: #151515; border-radius: 50% 50% 0 0; z-index: 4; }
+        .cabeza { width: 40px; height: 40px; background: linear-gradient(180deg, #e0b799, #c99a7b); border-radius: 50%; margin: 0 auto; border: 2px solid transparent; cursor: pointer; transition: 0.2s; }
+        .cabeza.seleccionado { border-color: #00ff88; box-shadow: 0 0 10px rgba(0,255,136,0.3); }
+        .cuello { width: 8px; height: 12px; background: #c99a7b; margin: 0 auto; border: 2px solid transparent; cursor: pointer; transition: 0.2s; }
+        .cuello.seleccionado { border-color: #00ff88; box-shadow: 0 0 10px rgba(0,255,136,0.3); }
+        .torso { width: 54px; height: 60px; background: linear-gradient(180deg, #1a1a1a, #252525); border-radius: 8px; margin: 0 auto; border: 2px solid transparent; cursor: pointer; transition: 0.2s; position: relative; }
+        .torso.seleccionado { border-color: #00ff88; box-shadow: 0 0 10px rgba(0,255,136,0.3); }
+        .detalle { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 34px; height: 24px; background: #222; border-radius: 5px; }
+        .raya { position: absolute; top: 38px; left: 50%; transform: translateX(-50%); width: 40px; height: 2px; background: #d4b826; }
+        .brazos { display: flex; justify-content: space-between; width: 74px; margin: -4px auto 0; }
+        .brazo { width: 12px; height: 45px; background: #252525; border-radius: 6px; }
+        .mano { width: 12px; height: 12px; background: #c99a7b; border-radius: 50%; margin-top: -2px; }
+        .cinturon { width: 48px; height: 8px; background: #443810; margin: 0 auto; border-radius: 2px; }
+        .hebilla { width: 10px; height: 7px; background: #d4b826; margin: 0 auto; border-radius: 2px; }
+        .piernas { display: flex; justify-content: space-between; width: 50px; margin: 4px auto 0; }
+        .pierna { width: 16px; height: 48px; background: #1a1a1a; border-radius: 4px 4px 6px 6px; }
+        .zapato { width: 18px; height: 10px; background: #d4b826; border-radius: 4px; margin-top: -2px; }
 
-        .botones-zonas { display: flex; flex-direction: column; gap: 10px; }
-        .btn-zona {
-            padding: 12px 18px; background: #252525; color: #fff; font-weight: 600;
-            border: 2px solid transparent; border-radius: 10px; cursor: pointer; transition: 0.25s;
-        }
+        .botones-zonas { display: flex; flex-direction: column; gap: 8px; }
+        .btn-zona { padding: 10px 16px; background: #252525; color: #fff; border: 2px solid transparent; border-radius: 10px; cursor: pointer; transition: 0.2s; }
         .btn-zona.activo { border-color: #00ff88; color: #00ff88; background: #0f2f1f; }
 
-        /* OTRAS APPS */
-        .seccion-otras {
-            background: #151515; border-radius: 12px; padding: 15px; margin-bottom: 20px;
-            border-left: 3px solid #00a2ff;
-        }
-        .seccion-otras h4 { color: #00a2ff; margin-bottom: 10px; }
-        .lista-apps { display: flex; flex-wrap: wrap; gap: 8px; }
-        .app { padding: 8px 12px; background: #252525; border-radius: 8px; font-size: 13px; cursor: pointer; }
-        .app:hover { background: #00a2ff; }
+        .fila { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #222; }
+        .sw { width: 50px; height: 26px; background: #333; border-radius: 13px; position: relative; cursor: pointer; transition: 0.25s; }
+        .sw.activo { background: #00ff88; }
+        .sw::after { content: ''; position: absolute; width: 20px; height: 20px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: 0.25s; }
+        .sw.activo::after { left: 27px; }
 
-        /* INTERRUPTORES */
-        .fila { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #252525; }
-        .interruptor {
-            width: 52px; height: 28px; background: #333; border-radius: 14px; position: relative; cursor: pointer; transition: 0.3s;
-        }
-        .interruptor.activo { background: #00ff88; }
-        .interruptor::after {
-            content: ''; position: absolute; width: 22px; height: 22px;
-            background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: 0.3s;
-        }
-        .interruptor.activo::after { left: 27px; }
+        .slider { width: 100%; height: 6px; -webkit-appearance: none; background: #333; border-radius: 3px; margin: 10px 0; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: #00a2ff; border-radius: 50%; cursor: pointer; }
+        .valor-fov { text-align: right; color: #00ff88; font-weight: bold; }
 
-        /* FOV */
-        .slider-contenedor { padding: 15px 0; }
-        .slider { width: 100%; height: 6px; -webkit-appearance: none; background: #333; border-radius: 3px; outline: none; }
-        .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; background: #00a2ff; border-radius: 50%; cursor: pointer; }
-        .valor-fov { text-align: right; color: #00ff88; font-weight: bold; margin-top: 5px; }
-
-        /* BOTÓN PRINCIPAL */
         .btn-principal {
-            width: 100%; padding: 18px; background: #fff; color: #000; font-weight: bold; font-size: 17px;
-            border: none; border-radius: 14px; cursor: pointer; margin-top: 10px; transition: 0.3s;
+            width: 100%; padding: 16px; background: #fff; color: #000; font-weight: bold; font-size: 16px;
+            border: none; border-radius: 12px; cursor: pointer; margin-top: 10px; transition: 0.2s;
         }
         .btn-principal:disabled { background: #333; color: #666; cursor: not-allowed; }
 
-        /* CAJA DE PERMISOS */
-        .caja-permiso {
+        .caja {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #1a1a1a; padding: 30px; border-radius: 16px; border: 1px solid #333;
-            z-index: 100; display: none; width: 90%; max-width: 340px; text-align: center;
+            background: #1a1a1a; padding: 25px; border-radius: 15px; border: 1px solid #333;
+            z-index: 100; display: none; width: 90%; max-width: 320px; text-align: center;
         }
-        .caja-permiso h3 { margin-bottom: 15px; color: #fff; }
-        .caja-permiso p { color: #aaa; margin-bottom: 20px; font-size: 14px; }
-        .btn-azul {
-            padding: 14px 25px; background: #0088ff; color: #fff; border: none;
-            border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; margin: 8px 0;
-        }
-        .btn-gris {
-            padding: 12px 20px; background: #2a2a2a; color: #888; border: none;
-            border-radius: 10px; font-size: 14px; cursor: not-allowed; width: 100%; margin-top: 8px;
-        }
-        .btn-gris.activo { background: #00ff88; color: #000; cursor: pointer; }
+        .caja h3 { margin-bottom: 12px; }
+        .caja p { color: #aaa; margin-bottom: 18px; font-size: 14px; line-height: 1.5; }
+        .btn-azul { padding: 13px 20px; background: #0088ff; color: #fff; border: none; border-radius: 10px; font-size: 15px; cursor: pointer; width: 100%; margin: 6px 0; }
+        .btn-verde { padding: 13px 20px; background: #222; color: #666; border: none; border-radius: 10px; font-size: 15px; cursor: not-allowed; width: 100%; margin-top: 6px; }
+        .btn-verde.activo { background: #00ff88; color: #000; cursor: pointer; }
 
-        /* PANEL FLOTANTE — APARECE EN EL JUEGO */
-        .panel-flotante {
-            position: fixed; top: 15px; right: 15px;
-            background: rgba(0,0,0,0.92); color: #fff; padding: 12px 15px;
-            border-radius: 12px; border: 1px solid #00a2ff; box-shadow: 0 0 15px rgba(0,162,255,0.3);
-            z-index: 9999; display: none; min-width: 130px;
-        }
-        .panel-flotante h5 { font-size: 13px; margin-bottom: 8px; color: #00a2ff; }
-        .panel-flotante .fila-f { display: flex; justify-content: space-between; font-size: 11px; padding: 3px 0; }
-        .cerrar-flotante {
-            margin-top: 8px; background: #222; color: #fff; border: none;
-            padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; width: 100%;
-        }
+        .pie { text-align: center; margin-top: 20px; font-size: 12px; color: #444; }
+        .aviso { font-size: 11px; color: #555; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <!-- PANEL FLOTANTE QUE APARECE EN EL JUEGO -->
-    <div class="panel-flotante" id="panelFlotante">
-        <h5>🎯 AUXILIO DE MIRA</h5>
-        <div class="fila-f"><span>Zona:</span><span id="flotZona">CABEZA</span></div>
-        <div class="fila-f"><span>Aimbot:</span><span style="color:#00ff88">ACTIVO</span></div>
-        <div class="fila-f"><span>No Recoil:</span><span style="color:#00ff88">ACTIVO</span></div>
-        <div class="fila-f"><span>FOV:</span><span id="flotFov">0°</span></div>
-        <button class="cerrar-flotante" onclick="cerrarFlotante()">Cerrar Panel</button>
-    </div>
-
-    <!-- PERMISO DE ALMACENAMIENTO -->
-    <div class="caja-permiso" id="permisoAlmacen">
-        <h3>🔒 Permiso de Almacenamiento</h3>
-        <p>Se necesita acceso al almacenamiento para crear la carpeta del sistema, guardar los archivos de configuración y mantener los ajustes activos.</p>
+    <!-- PERMISO 1: ARCHIVOS (SÍ FUNCIONA) -->
+    <div class="caja" id="permisoArchivos">
+        <h3>📁 Acceso a Archivos</h3>
+        <p>Selecciona tu archivo de configuración del sistema.</p>
         <input type="file" id="archivoConfig" accept=".json" style="display:none;">
-        <button class="btn-azul" onclick="document.getElementById('archivoConfig').click()">✅ Permitir Acceso a Archivos</button>
-        <button class="btn-gris" id="btnContinuar">Esperando permiso...</button>
+        <button class="btn-azul" onclick="document.getElementById('archivoConfig').click()">Seleccionar localconfig.json</button>
+        <button class="btn-verde" id="btnPaso1">Esperando archivo...</button>
     </div>
 
-    <!-- PERMISO PARA MOSTRAR SOBRE OTRAS APPS -->
-    <div class="caja-permiso" id="permisoVentana" style="display:none;">
-        <h3>🪟 Permiso de Superposición</h3>
-        <p>Para mostrar el panel flotante dentro del juego, se necesita permiso para dibujar sobre otras aplicaciones.</p>
-        <button class="btn-azul" onclick="continuarDirecto()">✅ Otorgar Permiso</button>
+    <!-- PERMISO 2: SUPERPONER (SOLO FLUJO, WEB NO LO CONTROLA) -->
+    <div class="caja" id="permisoSuperposicion" style="display:none;">
+        <h3>ℹ️ Información</h3>
+        <p>El panel flotante encima del juego requiere una app real (.apk).<br><br>La web no puede hacerlo, pero todo lo demás funciona igual.</p>
+        <button class="btn-azul" onclick="continuarDirecto()">✅ Continuar al Panel</button>
     </div>
 
     <!-- PANEL PRINCIPAL -->
-    <div class="panel">
+    <div class="panel" id="panelPrincipal" style="display:none;">
         <div class="cabecera">
             <h1 class="titulo">AUXILIO</h1>
             <span class="version">FREE v2.0</span>
         </div>
 
-        <div class="estado" id="estadoSistema">SYSTEM STATUS · DESACTIVADO</div>
+        <div class="estado" id="estado">SYSTEM STATUS · DESACTIVADO</div>
 
         <div class="contenedor-personaje">
             <div class="personaje">
                 <div class="pelo"></div>
-                <div class="cabeza seleccionado" id="cabeza" onclick="seleccionarZona('cabeza')"></div>
-                <div class="cuello" id="cuello" onclick="seleccionarZona('cuello')"></div>
-                <div class="torso" id="pecho" onclick="seleccionarZona('pecho')">
-                    <div class="detalle-pecho"></div>
-                    <div class="raya-dorada"></div>
+                <div class="cabeza seleccionado" id="cabeza" onclick="elegirZona('cabeza')"></div>
+                <div class="cuello" id="cuello" onclick="elegirZona('cuello')"></div>
+                <div class="torso" id="pecho" onclick="elegirZona('pecho')">
+                    <div class="detalle"></div>
+                    <div class="raya"></div>
                 </div>
                 <div class="brazos">
                     <div class="brazo"><div class="mano"></div></div>
@@ -197,58 +120,47 @@
                 </div>
             </div>
             <div class="botones-zonas">
-                <button class="btn-zona activo" id="btnCabeza" onclick="seleccionarZona('cabeza')">CABEZA</button>
-                <button class="btn-zona" id="btnCuello" onclick="seleccionarZona('cuello')">CUELLO</button>
-                <button class="btn-zona" id="btnPecho" onclick="seleccionarZona('pecho')">PECHO</button>
-            </div>
-        </div>
-
-        <div class="seccion-otras">
-            <h4>📱 OTRAS APLICACIONES</h4>
-            <div class="lista-apps">
-                <div class="app" onclick="seleccionarApp('com.dts.freefireth')">Free Fire</div>
-                <div class="app" onclick="seleccionarApp('com.roblox.client')">Roblox</div>
-                <div class="app" onclick="seleccionarApp('otro')">Otra...</div>
+                <button class="btn-zona activo" id="btnCabeza" onclick="elegirZona('cabeza')">CABEZA</button>
+                <button class="btn-zona" id="btnCuello" onclick="elegirZona('cuello')">CUELLO</button>
+                <button class="btn-zona" id="btnPecho" onclick="elegirZona('pecho')">PECHO</button>
             </div>
         </div>
 
         <div class="fila">
             <span>Aimbot</span>
-            <div class="interruptor activo" id="swAimbot" onclick="toggle(this)"></div>
+            <div class="sw activo" onclick="this.classList.toggle('activo')"></div>
         </div>
         <div class="fila">
             <span>Precisión</span>
-            <div class="interruptor activo" id="swPrecision" onclick="toggle(this)"></div>
+            <div class="sw activo" onclick="this.classList.toggle('activo')"></div>
         </div>
         <div class="fila">
             <span>No Recoil</span>
-            <div class="interruptor activo" id="swNoRecoil" onclick="toggle(this)"></div>
+            <div class="sw activo" onclick="this.classList.toggle('activo')"></div>
         </div>
         <div class="fila">
             <span>Headshot</span>
-            <div class="interruptor activo" id="swHeadshot" onclick="toggle(this)"></div>
+            <div class="sw activo" onclick="this.classList.toggle('activo')"></div>
         </div>
 
-        <div class="slider-contenedor">
-            <div style="display:flex; justify-content:space-between;">
+        <div style="margin-top:10px;">
+            <div style="display:flex;justify-content:space-between;">
                 <span>FOV</span>
-                <span class="valor-fov" id="valorFov">0</span>
+                <span class="valor-fov" id="valFov">0</span>
             </div>
-            <input type="range" class="slider" id="sliderFov" min="0" max="360" value="0" oninput="actualizarFov(this.value)">
+            <input type="range" class="slider" min="0" max="360" value="0" oninput="document.getElementById('valFov').textContent=this.value">
         </div>
 
-        <button class="btn-principal" id="btnActivar" onclick="activarSistema()">ACTIVAR AUXILIO DE MIRA</button>
+        <button class="btn-principal" id="btnActivar" onclick="activarTodo()">ACTIVAR AUXILIO DE MIRA</button>
 
         <p class="pie">AUXILIO DE MIRA · BRAZZARCHIVE</p>
+        <p class="aviso">⚠️ La web no muestra panel flotante encima del juego — se necesita APK real</p>
     </div>
 
 <script>
 let zonaActiva = 'cabeza';
-let permisoAlmacen = false;
-let fovValor = 0;
 
-// SELECCIONAR ZONA
-function seleccionarZona(zona) {
+function elegirZona(zona) {
     zonaActiva = zona;
     ['cabeza','cuello','pecho'].forEach(z => {
         document.getElementById(z).classList.remove('seleccionado');
@@ -256,68 +168,47 @@ function seleccionarZona(zona) {
     });
     document.getElementById(zona).classList.add('seleccionado');
     document.getElementById('btn'+zona.charAt(0).toUpperCase()+zona.slice(1)).classList.add('activo');
-    document.getElementById('flotZona').textContent = zona.toUpperCase();
 }
 
-// INTERRUPTORES
-function toggle(el) { el.classList.toggle('activo'); }
-
-// FOV
-function actualizarFov(v) {
-    fovValor = v;
-    document.getElementById('valorFov').textContent = v;
-    document.getElementById('flotFov').textContent = v + '°';
-}
-
-// CARGA DE ARCHIVO = PERMISO DE ALMACENAMIENTO
 document.getElementById('archivoConfig').addEventListener('change', e => {
     if (e.target.files.length > 0) {
-        permisoAlmacen = true;
-        document.getElementById('btnContinuar').textContent = '✅ Continuar';
-        document.getElementById('btnContinuar').classList.add('activo');
-        document.getElementById('btnContinuar').onclick = function() {
-            document.getElementById('permisoAlmacen').style.display = 'none';
-            document.getElementById('permisoVentana').style.display = 'block';
+        document.getElementById('btnPaso1').textContent = '✅ Continuar';
+        document.getElementById('btnPaso1').classList.add('activo');
+        document.getElementById('btnPaso1').onclick = () => {
+            document.getElementById('permisoArchivos').style.display = 'none';
+            document.getElementById('permisoSuperposicion').style.display = 'block';
         };
     }
 });
 
 function continuarDirecto() {
-    document.getElementById('permisoVentana').style.display = 'none';
-    abrirJuegoDirecto();
+    document.getElementById('permisoSuperposicion').style.display = 'none';
+    document.getElementById('panelPrincipal').style.display = 'block';
 }
 
-function seleccionarApp(nombre) { alert('📱 Seleccionada: ' + nombre); }
-
-// ABRIR JUEGO DIRECTO — SIN PLAY STORE
-function abrirJuegoDirecto() {
-    document.getElementById('btnActivar').textContent = 'ACTIVANDO...';
-    document.getElementById('estadoSistema').textContent = 'CONECTANDO...';
+function activarTodo() {
+    const btn = document.getElementById('btnActivar');
+    const estado = document.getElementById('estado');
+    
+    btn.disabled = true;
+    btn.textContent = 'ACTIVANDO...';
+    estado.textContent = 'CARGANDO...';
+    
     setTimeout(() => {
-        document.getElementById('estadoSistema').textContent = 'ACTIVO — ' + zonaActiva.toUpperCase();
-        document.getElementById('estadoSistema').classList.add('activo');
-        document.getElementById('btnActivar').textContent = '✅ INYECTADO — JUEGO ABIERTO';
-        // MOSTRAR PANEL FLOTANTE
-        document.getElementById('panelFlotante').style.display = 'block';
-        // ABRIR FREE FIRE DIRECTO
+        estado.textContent = 'ACTIVO — ' + zonaActiva.toUpperCase();
+        estado.classList.add('activo');
+        btn.textContent = '✅ ABRIR JUEGO';
+        
         setTimeout(() => {
             window.location.href = 'intent://com.dts.freefireth/#Intent;package=com.dts.freefireth;end';
-        }, 800);
-    }, 1200);
+            btn.textContent = '🎮 JUEGO ABIERTO';
+        }, 1000);
+    }, 1500);
 }
 
-// ACTIVAR SISTEMA
-function activarSistema() {
-    if (!permisoAlmacen) {
-        document.getElementById('permisoAlmacen').style.display = 'block';
-        return;
-    }
-    abrirJuegoDirecto();
-}
-
-function cerrarFlotante() {
-    document.getElementById('panelFlotante').style.display = 'none';
-}
+window.onload = () => {
+    document.getElementById('permisoArchivos').style.display = 'block';
+};
 </script>
 
 </body>
